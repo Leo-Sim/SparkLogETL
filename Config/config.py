@@ -25,3 +25,9 @@ class Config:
     def get_reader_dir_path(self):
         return self._get_reader().get("dir-path")
 
+
+    def _get_connector(self):
+        return self.config.get("connector")
+
+    def get_server_address(self):
+        return self._get_connector().get("server-address")
