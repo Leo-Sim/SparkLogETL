@@ -1,3 +1,8 @@
 
 reader:
-  dir-path: C:\pythonproject\SparkLogETL\testdata\log
+  dir-path: /home/ec2-user/logfile/log
+
+
+
+connector:
+  server-address: 18.221.251.248:15002 # server ip:port
