@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from pyspark.sql.dataframe import DataFrame
 from pyspark.sql.functions import regexp_extract, regexp
 
+from Reader.log_info import LogField
+
 import logging
 
 class LogParserFactory:
@@ -30,6 +32,7 @@ class LogParserFactory:
 
 
 
+
 class LogParser(ABC):
 
     @abstractmethod
@@ -51,13 +54,13 @@ class ApacheWebLogParser(LogParser):
 
     def parse_raw_log(self, df) -> DataFrame :
         parsed_df = df.select(
-            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 1).alias("ip"),
-            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 2).alias("time_stamp"),
-            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 3).alias("method"),
-            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 4).alias("url"),
-            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 5).alias("protocol"),
-            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 6).alias("status"),
-            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 7).alias("size"),
+            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 1).alias(LogField.LOG_FIELD_IP),
+            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 2).alias(LogField.LOG_FIELD_TIMESTAMP),
+            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 3).alias(LogField.LOG_FIELD_METHOD),
+            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 4).alias(LogField.LOG_FIELD_URL),
+            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 5).alias(LogField.LOG_FIELD_PROTOCOL),
+            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 6).alias(LogField.LOG_FIELD_STATUS),
+            regexp_extract("value", ApacheWebLogParser.apache_web_log_regex, 7).alias(LogField.LOG_FIELD_SIZE),
 
         )
 

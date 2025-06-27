@@ -2,8 +2,7 @@
 import os
 
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import regexp_extract
-from requests import session
+from pyspark.sql.dataframe import DataFrame
 from pathlib import Path
 from Reader.log_parser import LogParserFactory
 
@@ -21,21 +20,21 @@ class LogReader:
 
 
 
-    def read_file(self):
+    def read_file(self) -> DataFrame:
         """
         This function reads text log file
         :return:
         """
 
         if os.name == "nt":
-            file_name = "access.log"
+            file_name = "access_part_aa"
             file_path = self.dir_path + "/" + file_name
 
             # set parser
             parser = LogParserFactory.get_log_parser(LogParserFactory.LOG_TYPE_APACH_WEB_LOG)
             df = self.spark.read.text(file_path)
             parsed_df = parser.parse_raw_log(df)
-            parsed_df.show()
+            return parsed_df
 
 
         else:
@@ -57,6 +56,8 @@ class LogReader:
         """
 
         file_list = os.listdir(self.dir_path)
+
+
 
         for file_name in file_list:
             file_path = os.path.join(self.dir_path, file_name)
