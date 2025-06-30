@@ -1,8 +1,14 @@
 
 reader:
-  dir-path: /home/ec2-user/logfile/log
-
+  dir-path: /home/heesu/logs
 
 
 connector:
-  server-address: 18.221.251.248:15002 # server ip:port
+  server-address: localhost:15002 # server ip:port
+
+
+attack:
+  brute-force:
+    login-count-threshold: 5
+    #Second
+    time-gap-threshold: 20

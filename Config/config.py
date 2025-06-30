@@ -31,3 +31,18 @@ class Config:
 
     def get_server_address(self):
         return self._get_connector().get("server-address")
+
+
+    # config malicious attacks
+
+    def _get_attack(self):
+        return self.config.get("attack")
+
+    def _get_brute_force(self):
+        return self._get_attack().get("brute-force")
+
+    def get_brute_force_login_count_threshold(self):
+        return self._get_brute_force().get("login-count-threshold")
+
+    def get_brute_force_time_gap_threshold(self):
+        return self._get_brute_force().get("time-gap-threshold")

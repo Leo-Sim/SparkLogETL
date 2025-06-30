@@ -9,3 +9,7 @@ class LogField:
     LOG_FIELD_PROTOCOL = "protocol"
     LOG_FIELD_STATUS = "status"
     LOG_FIELD_SIZE = "size"
+
+    DATE_TIME_FORMAT = "%Y-%m-%d %H:%M:%S"
+
+    ATTACK_TYPE = "Attack Type"

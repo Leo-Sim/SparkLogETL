@@ -1,6 +1,6 @@
 import os
 
-from Reader import LogReader
+from Reader import LogReader, LogField
 from Config import Config
 
 from Connector import Connector
@@ -13,8 +13,12 @@ if __name__ == '__main__':
 
     config = Config("config.yaml")
 
+    # -------- configuration information -----------
     file_path = config.get_reader_dir_path()
     server_address = config.get_server_address()
+
+    brute_login_count_th = config.get_brute_force_login_count_threshold()
+    brute_time_gap_th = config.get_brute_force_time_gap_threshold()
 
     # Connect to remote server
     connector = Connector(server_address)
@@ -32,11 +36,13 @@ if __name__ == '__main__':
     #
     # #
 
-    analyzer = LogAnalyzer()
+    analyzer = LogAnalyzer(brute_login_count_th, brute_time_gap_th)
 
-    fdf = analyzer.filter_by_status(df, "404")
-    fdf = fdf.groupby("status").count()
-    fdf.show()
+    # fdf.show()
+
+    analyzer.start_analysis(df, "","")
+    # df.show()
+
     # ip_count = df.groupby("status").count()
     # ip_count.show()
 
