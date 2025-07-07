@@ -1,5 +1,5 @@
 
-from pyspark.sql.functions import col, min, max, unix_timestamp, floor, lit
+from pyspark.sql.functions import col, min, max, unix_timestamp, floor, lit, window
 from pyspark.sql import DataFrame
 
 from Reader.log_info import LogField
@@ -14,10 +14,14 @@ class LogAnalyzer:
 
     ATTACK_BRUTE_FORCE = "Brute force"
 
-    def __init__(self, brute_count_th, brute_time_th):
+    def __init__(self, config):
 
-        self.brute_count_th = brute_count_th
-        self.brute_time_th = brute_time_th
+
+        self.brute_count_th = config.get_brute_force_login_count_threshold()
+        self.brute_time_th = config.get_brute_force_time_gap_threshold()
+
+        self.ddos_request_count_th = config.get_ddos_request_count_threshold()
+        self.ddos_time_th = config.get_ddos_time_gap_threshold()
 
     def save_result(self, df, output_path, file_name) -> None:
         """
@@ -32,10 +36,15 @@ class LogAnalyzer:
 
     def start_analysis(self, df: DataFrame, output_path, file_name):
         brute_force_df = self._detect_brute_force(df)
+        brute_force_df.show()
 
-        result = brute_force_df.toJSON().collect()
+        # ddos_df = self._detect_ddos(df)
+        # ddos_df.show()
 
-        print(result)
+        pass
+        # result = brute_force_df.toJSON().collect()
+
+        # print(result)
 
 
 
@@ -52,7 +61,26 @@ class LogAnalyzer:
     def _filter_by_protocol(self, df: DataFrame, protocol) -> DataFrame:
         return df.filter(col(LogField.LOG_FIELD_PROTOCOL) == protocol)
 
+    def _detect_sql_injection(self, df: DataFrame) -> DataFrame:
+        pass
+
+    def _detect_ddos(self, df: DataFrame) -> DataFrame:
+
+        ddos_df = df.groupby(
+            window(col(LogField.LOG_FIELD_TIMESTAMP), self.ddos_time_th),
+            col(LogField.LOG_FIELD_IP)
+        ).count().filter("count > " + str(self.ddos_request_count_th))
+
+        ddos_df.unpersist(blocking=True)
+
+        return ddos_df
+
     def _detect_brute_force(self, df: DataFrame) -> DataFrame:
+        """
+        This function for detecting brute force attack.
+        :param df:
+        :return:
+        """
 
         BUCKET = "bucket"
 
@@ -78,6 +106,8 @@ class LogAnalyzer:
                   .dropDuplicates([LogField.LOG_FIELD_IP, LogField.LOG_FIELD_URL])
                   .orderBy(col("count").desc())
                   .drop("count"))
+
+        result.unpersist(blocking=True)
 
         return result
 

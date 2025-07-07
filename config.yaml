@@ -10,5 +10,11 @@ connector:
 attack:
   brute-force:
     login-count-threshold: 5
-    #Second
+    # Second
     time-gap-threshold: 20
+
+  ddos:
+    request-count-threshold: 100
+    # String.
+    # for example, 5 seconds, 1 minute, 10minutes
+    time-gap-threshold: 10 minutes

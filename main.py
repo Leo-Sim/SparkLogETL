@@ -17,32 +17,25 @@ if __name__ == '__main__':
     file_path = config.get_reader_dir_path()
     server_address = config.get_server_address()
 
-    brute_login_count_th = config.get_brute_force_login_count_threshold()
-    brute_time_gap_th = config.get_brute_force_time_gap_threshold()
-
     # Connect to remote server
     connector = Connector(server_address)
     spark = connector.connect().get_session()
 
+    ################# Remove cache ##################
+    spark.catalog.clearCache()
 
-    print("session : ", spark.version)
+
+    print("Spark version : ", spark.version)
 
     # Read raw logs from log files
     reader = LogReader(spark, file_path)
     df = reader.read_file()
-    #
+
+
     # # Analyzing step
-    #
-    #
-    # #
 
-    analyzer = LogAnalyzer(brute_login_count_th, brute_time_gap_th)
-
-    # fdf.show()
+    analyzer = LogAnalyzer(config)
 
     analyzer.start_analysis(df, "","")
-    # df.show()
 
-    # ip_count = df.groupby("status").count()
-    # ip_count.show()
 

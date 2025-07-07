@@ -46,3 +46,12 @@ class Config:
 
     def get_brute_force_time_gap_threshold(self):
         return self._get_brute_force().get("time-gap-threshold")
+
+    def _get_ddos(self):
+        return self._get_attack().get("ddos")
+
+    def get_ddos_request_count_threshold(self):
+        return self._get_ddos().get("request-count-threshold")
+
+    def get_ddos_time_gap_threshold(self):
+        return self._get_ddos().get("time-gap-threshold")
